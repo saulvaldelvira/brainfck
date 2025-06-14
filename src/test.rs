@@ -79,7 +79,7 @@ fn tiny_vec_test_mem() {
 
     let mut inter = Interpreter::vec_output_empty_input(prog);
 
-    for _ in 0..MEM_TINY_SIZE {
+    for _ in 0..DEFAULT_MEM_SIZE {
         inter.step().unwrap();
     }
     assert!(inter.lives_on_stack());
@@ -100,7 +100,7 @@ fn tiny_vec_test_loops() {
     let mut inter = Interpreter::vec_output_empty_input(prog);
 
     inter.step().unwrap(); // the '+'
-    for _ in 0..OPEN_LOOPS_TINY_SIZE {
+    for _ in 0..DEFAULT_LOOP_STACK_SIZE {
         inter.step().unwrap();
     }
     assert!(inter.lives_on_stack());
@@ -116,16 +116,23 @@ fn tiny_vec_test_loops() {
 
 #[test]
 fn tiny_vec_test_prog_owned() {
-    let prog = b"+++";
+    let prog = b"";
 
     let mut inter = Interpreter::vec_output_empty_input(prog);
 
     assert!(inter.lives_on_stack());
 
-    // This pushes a byte to the program, causng it to turn
-    // into an Owned variant, and allocating memory.
-    inter.push_instruction(b'.');
+    for _ in 0..DEFAULT_PROGRAM_SIZE {
+        inter.push_instruction(b'.');
+    }
+
+    assert!(inter.lives_on_stack());
+
+        inter.push_instruction(b'.');
+    // This pushes a byte to the program, causng it to overflow
+    // it's stack capcity, and reallocate to the heap
     assert!(!inter.lives_on_stack());
 
     inter.run().unwrap();
 }
+

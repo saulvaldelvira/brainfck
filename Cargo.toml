@@ -1,12 +1,25 @@
 [package]
 name = "brainfck"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 description = "Brainfuck interpreter"
 authors = ["Saúl Valdelvira <saul@saulv.es>"]
 license = "GPL-3.0-only"
 readme = "README"
 repository = "https://github.com/saulvaldelvira/brainfck"
+keywords = ["no_std", "interpreter", "brainfuck"]
 
-[dependencies]
-tiny-vec = ">=0.9.4"
+[[bin]]
+name = "brainfck"
+path = "src/main.rs"
+required-features = ["std"]
+
+[dependencies.tiny-vec]
+version = ">=0.9.5"
+git = "https://github.com/saulvaldelvira/tiny-vec"
+default-features = false
+
+[features]
+default = ["alloc", "std"]
+alloc = ["tiny-vec/alloc"]
+std = ["alloc"]
